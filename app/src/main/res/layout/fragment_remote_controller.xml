@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yxf.clippathlayout.impl.ClipPathFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/center_view"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_rectangle_orange"
+        android:clickable="true" />
+
+    <View
+        android:id="@+id/left_view"
+        android:layout_width="300dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_rectangle_green"
+        android:clickable="true" />
+
+    <View
+        android:id="@+id/right_view"
+        android:layout_width="300dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_rectangle_green"
+        android:clickable="true" />
+
+    <View
+        android:id="@+id/top_view"
+        android:layout_width="300dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_rectangle_blue"
+        android:clickable="true" />
+
+    <View
+        android:id="@+id/bottom_view"
+        android:layout_width="300dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_rectangle_blue"
+        android:clickable="true" />
+
+
+</com.yxf.clippathlayout.impl.ClipPathFrameLayout>

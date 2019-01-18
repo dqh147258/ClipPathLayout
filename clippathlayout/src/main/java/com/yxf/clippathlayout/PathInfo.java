@@ -1,0 +1,139 @@
+package com.yxf.clippathlayout;
+
+import android.graphics.Path;
+import android.view.View;
+
+import com.yxf.clippathlayout.pathgenerator.PathGenerator;
+
+import java.lang.ref.WeakReference;
+
+public class PathInfo {
+
+    public static final int APPLY_FLAG_DRAW_ONLY = 1;
+    public static final int APPLY_FLAG_TOUCH_ONLY = 1 << 1;
+    public static final int APPLY_FLAG_DRAW_AND_TOUCH = APPLY_FLAG_DRAW_ONLY | APPLY_FLAG_TOUCH_ONLY;
+
+    public static final int CLIP_TYPE_IN = 0;
+    public static final int CLIP_TYPE_OUT = 1;
+
+    private PathGenerator mPathGenerator;
+    private WeakReference<View> mViewReference;
+
+    private final int mSavedHashCode;
+
+    private int mApplyFlag;
+
+    private int mClipType;
+
+    private Path mPath;
+    private PathRegion mPathRegion;
+
+    private PathInfo(PathGenerator generator, View view) {
+        mPathGenerator = generator;
+        mViewReference = new WeakReference<View>(view);
+        mSavedHashCode = view.hashCode();
+        mPath = new Path();
+    }
+
+    public void apply(ClipPathLayout layout) {
+        layout.applyPathInfo(this);
+    }
+
+    public void apply() {
+        View view = mViewReference.get();
+        if (view == null) {
+            throw new NullPointerException("view is null");
+        }
+        if (view.getParent() instanceof ClipPathLayout) {
+            apply((ClipPathLayout) view.getParent());
+        } else {
+            throw new UnsupportedOperationException(String.format("the parent(%s) of view(%s) does not implement ClipPathLayout",
+                    view.getParent().getClass().getCanonicalName(), view.getClass().getCanonicalName()));
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return mSavedHashCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PathInfo) {
+            PathInfo info = (PathInfo) obj;
+            if (info.mViewReference.get() == mViewReference.get()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    PathGenerator getPathGenerator() {
+        return mPathGenerator;
+    }
+
+    public int getApplyFlag() {
+        return mApplyFlag;
+    }
+
+    public int getClipType() {
+        return mClipType;
+    }
+
+    View getView() {
+        return mViewReference.get();
+    }
+
+    Path getPath() {
+        return mPath;
+    }
+
+    void setPath(Path path) {
+        mPath = path;
+    }
+
+    PathRegion getPathRegion() {
+        return mPathRegion;
+    }
+
+    void setPathRegion(PathRegion pathRegion) {
+        mPathRegion = pathRegion;
+    }
+
+    public static class Builder {
+        private PathGenerator mPathGenerator;
+        private View mView;
+        private int mApplyFlag = APPLY_FLAG_DRAW_AND_TOUCH;
+        private int mClipType = CLIP_TYPE_IN;
+
+        public Builder(PathGenerator generator, View view) {
+            if (generator == null) {
+                throw new NullPointerException("PathGenerator is null");
+            }
+            if (view == null) {
+                throw new NullPointerException("view is null");
+            }
+            this.mPathGenerator = generator;
+            this.mView = view;
+        }
+
+        public Builder setApplyFlag(int flag) {
+            mApplyFlag = flag;
+            return this;
+        }
+
+        public Builder setClipType(int type) {
+            mClipType = type;
+            return this;
+        }
+
+        public PathInfo create() {
+            PathInfo info = new PathInfo(mPathGenerator, mView);
+            info.mApplyFlag = mApplyFlag;
+            info.mClipType = mClipType;
+            return info;
+        }
+    }
+
+
+}

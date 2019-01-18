@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yxf.clippathlayout.impl.ClipPathFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/clip_path_frame_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/switch_path_function"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|left"
+        android:layout_margin="30dp"
+        android:background="@drawable/button_oval"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="切换Path功能" />
+
+    <TextView
+        android:id="@+id/switch_clip_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_margin="30dp"
+        android:background="@drawable/button_rectangle_green"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="切换切割方式"
+        />
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_green_light" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:src="@mipmap/image" />
+
+</com.yxf.clippathlayout.impl.ClipPathFrameLayout>

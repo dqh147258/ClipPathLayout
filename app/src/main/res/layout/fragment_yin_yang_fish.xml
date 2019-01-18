@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yxf.clippathlayout.impl.ClipPathFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
+    >
+
+    <View
+        android:id="@+id/yang_fish_view"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_rectangle_white"
+        android:clickable="true" />
+
+    <View
+        android:id="@+id/yin_fish_view"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_rectangle_black"
+        android:clickable="true" />
+
+</com.yxf.clippathlayout.impl.ClipPathFrameLayout>

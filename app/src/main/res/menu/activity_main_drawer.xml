@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_circle_path"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="圆形" />
+        <item
+            android:id="@+id/nav_control_button"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="方向键" />
+        <item
+            android:id="@+id/nav_remote_controller"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="遥控器" />
+        <item
+            android:id="@+id/yin_yang_fish"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="阴阳鱼" />
+    </group>
+</menu>
