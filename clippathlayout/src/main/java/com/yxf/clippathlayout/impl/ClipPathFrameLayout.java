@@ -40,6 +40,11 @@ public class ClipPathFrameLayout extends FrameLayout implements ClipPathLayout {
     }
 
     @Override
+    public void cancelPathInfo(View child) {
+        mClipPathLayoutDelegate.cancelPathInfo(child);
+    }
+
+    @Override
     public void beforeDrawChild(Canvas canvas, View child, long drawingTime) {
         mClipPathLayoutDelegate.beforeDrawChild(canvas, child, drawingTime);
     }

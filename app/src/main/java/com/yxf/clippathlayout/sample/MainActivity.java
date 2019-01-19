@@ -3,6 +3,7 @@ package com.yxf.clippathlayout.sample;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mContainer = findViewById(R.id.fragment_container);
-        switchFragment(new YinYangFishFragment());
+        switchFragment(new TransitionViewFragment());
     }
 
     @Override
@@ -70,10 +71,15 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private Fragment last;
+
     private void switchFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (last != null) {
+            fragmentTransaction.hide(last);
+        }
+        fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
+        last = fragment;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -90,6 +96,8 @@ public class MainActivity extends AppCompatActivity
             switchFragment(new RemoteControllerFragment());
         } else if (id == R.id.yin_yang_fish) {
             switchFragment(new YinYangFishFragment());
+        } else if (id == R.id.nav_transition_view) {
+            switchFragment(new TransitionViewFragment());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

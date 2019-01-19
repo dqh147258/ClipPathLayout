@@ -10,7 +10,7 @@ import android.view.View;
 
 public class Utils {
 
-    private static final String TAG = Utils.class.getSimpleName();
+    private static final String TAG = getTAG(Utils.class);
 
     public static void clipOutPath(Canvas canvas, Path path) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -44,6 +44,10 @@ public class Utils {
         } else {
             view.post(runnable);
         }
+    }
+
+    public static String getTAG(Class c) {
+        return Config.libTAG + "." + c.getSimpleName();
     }
 
 

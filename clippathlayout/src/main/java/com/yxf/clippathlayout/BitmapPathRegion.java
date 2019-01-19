@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Path;
 
+import static com.yxf.clippathlayout.Config.DEFAULT_IN_SAMPLE_SIZE;
+
 
 public class BitmapPathRegion implements PathRegion {
 
@@ -14,7 +16,7 @@ public class BitmapPathRegion implements PathRegion {
     private final int mInSampleSize;
 
     public BitmapPathRegion(Path path, int clipType, int width, int height) {
-        this(path, clipType, width, height, 16);
+        this(path, clipType, width, height, DEFAULT_IN_SAMPLE_SIZE);
     }
 
     public BitmapPathRegion(Path path, int clipType, int width, int height, int inSampleSize) {

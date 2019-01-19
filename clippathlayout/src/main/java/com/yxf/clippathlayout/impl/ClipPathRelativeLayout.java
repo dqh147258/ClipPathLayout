@@ -40,6 +40,11 @@ public class ClipPathRelativeLayout extends RelativeLayout implements ClipPathLa
     }
 
     @Override
+    public void cancelPathInfo(View child) {
+        mClipPathLayoutDelegate.cancelPathInfo(child);
+    }
+
+    @Override
     public void beforeDrawChild(Canvas canvas, View child, long drawingTime) {
         mClipPathLayoutDelegate.beforeDrawChild(canvas, child, drawingTime);
     }

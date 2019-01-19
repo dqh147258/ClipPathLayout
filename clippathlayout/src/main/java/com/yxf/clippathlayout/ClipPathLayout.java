@@ -13,6 +13,8 @@ public interface ClipPathLayout {
 
     void applyPathInfo(PathInfo info);
 
+    void cancelPathInfo(View child);
+
     void beforeDrawChild(Canvas canvas, View child, long drawingTime);
 
     void afterDrawChild(Canvas canvas, View child, long drawingTime);

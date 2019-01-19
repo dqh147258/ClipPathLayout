@@ -1,13 +1,17 @@
 package com.yxf.clippathlayout;
 
 import android.graphics.Path;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewParent;
 
 import com.yxf.clippathlayout.pathgenerator.PathGenerator;
 
 import java.lang.ref.WeakReference;
 
 public class PathInfo {
+
+    private static final String TAG = Utils.getTAG(PathInfo.class);
 
     public static final int APPLY_FLAG_DRAW_ONLY = 1;
     public static final int APPLY_FLAG_TOUCH_ONLY = 1 << 1;
@@ -35,11 +39,12 @@ public class PathInfo {
         mPath = new Path();
     }
 
-    public void apply(ClipPathLayout layout) {
+    public PathInfo apply(ClipPathLayout layout) {
         layout.applyPathInfo(this);
+        return this;
     }
 
-    public void apply() {
+    public PathInfo apply() {
         View view = mViewReference.get();
         if (view == null) {
             throw new NullPointerException("view is null");
@@ -50,6 +55,27 @@ public class PathInfo {
             throw new UnsupportedOperationException(String.format("the parent(%s) of view(%s) does not implement ClipPathLayout",
                     view.getParent().getClass().getCanonicalName(), view.getClass().getCanonicalName()));
         }
+        return this;
+    }
+
+    public PathInfo cancel() {
+        View view = mViewReference.get();
+        if (view == null) {
+            Log.d(TAG, "cancel: view is null");
+            return this;
+        }
+        ViewParent parent = view.getParent();
+        if (parent == null) {
+            Log.d(TAG, "cancel: the parent of view is null");
+            return this;
+        }
+        if (parent instanceof ClipPathLayout) {
+            ((ClipPathLayout) parent).cancelPathInfo(view);
+        } else {
+            throw new UnsupportedOperationException(String.format("the parent(%s) of view(%s) does not implement ClipPathLayout",
+                    view.getParent().getClass().getCanonicalName(), view.getClass().getCanonicalName()));
+        }
+        return this;
     }
 
     @Override

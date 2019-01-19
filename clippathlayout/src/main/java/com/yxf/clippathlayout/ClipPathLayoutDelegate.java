@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ClipPathLayoutDelegate implements ClipPathLayout {
 
-    private static final String TAG = ClipPathLayoutDelegate.class.getSimpleName();
+    private static final String TAG = Utils.getTAG(ClipPathLayoutDelegate.class);
 
     ViewGroup mParent;
 
@@ -106,6 +106,26 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
                 }
                 mPathInfoMap.put(new ViewKey(info.hashCode(), info.getView()), info);
                 notifyPathChangedInternal(info.getView());
+            }
+        });
+    }
+
+    @Override
+    public void cancelPathInfo(View child) {
+        cancelPathInfoInternal(child);
+    }
+
+    private void cancelPathInfoInternal(final View child) {
+        if (child == null) {
+            Log.e(TAG, "cancelPathInfo: child is null");
+            return;
+        }
+        Utils.runOnUiThreadAfterViewCanUse(mParent, new Runnable() {
+            @Override
+            public void run() {
+                ViewGetKey key = getTempViewGetKey(child.hashCode(), child);
+                mPathInfoMap.remove(key);
+                mParent.invalidate();
             }
         });
     }

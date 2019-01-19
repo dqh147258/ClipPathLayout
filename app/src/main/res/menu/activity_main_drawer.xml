@@ -20,5 +20,13 @@
             android:id="@+id/yin_yang_fish"
             android:icon="@drawable/ic_menu_gallery"
             android:title="阴阳鱼" />
+        <item
+            android:id="@+id/nav_transition_view"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="场景切换" />
+        <item
+            android:id="@+id/nav_transition_fragment"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Fragment切换" />
     </group>
 </menu>
