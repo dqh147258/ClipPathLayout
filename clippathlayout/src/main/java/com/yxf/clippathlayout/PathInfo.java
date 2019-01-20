@@ -51,9 +51,13 @@ public class PathInfo {
         }
         if (view.getParent() instanceof ClipPathLayout) {
             apply((ClipPathLayout) view.getParent());
+        } else if (view.getParent() != null) {
+            throw new UnsupportedOperationException(
+                    String.format("the parent(%s) of view(%s) does not implement ClipPathLayout",
+                            view.getParent().getClass().getCanonicalName(), view.getClass().getCanonicalName()));
         } else {
-            throw new UnsupportedOperationException(String.format("the parent(%s) of view(%s) does not implement ClipPathLayout",
-                    view.getParent().getClass().getCanonicalName(), view.getClass().getCanonicalName()));
+            throw new UnsupportedOperationException(
+                    String.format("the parent of view(%s) is null", view.getClass().getCanonicalName()));
         }
         return this;
     }

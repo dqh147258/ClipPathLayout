@@ -9,8 +9,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yxf.clippathlayout.pathgenerator.CirclePathGenerator;
 import com.yxf.clippathlayout.transition.TransitionAdapter;
 import com.yxf.clippathlayout.transition.TransitionViewLayout;
+import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator;
+import com.yxf.clippathlayout.transition.generator.OvalTransitionPathGenerator;
+import com.yxf.clippathlayout.transition.generator.RandomTransitionPathGenerator;
+import com.yxf.clippathlayout.transition.generator.RhombusTransitionPathGenerator;
 
 public class TransitionViewFragment extends Fragment {
 
@@ -23,6 +28,11 @@ public class TransitionViewFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mLayout = (TransitionViewLayout) inflater.inflate(R.layout.fragment_transition_view, null);
+        RandomTransitionPathGenerator generator =
+                new RandomTransitionPathGenerator(new CircleTransitionPathGenerator());
+        generator.add(new OvalTransitionPathGenerator());
+        generator.add(new RhombusTransitionPathGenerator());
+        mLayout.setAdapter(new TransitionAdapter(generator));
         mBlueView = mLayout.findViewById(R.id.blue_view);
         mGreenView = mLayout.findViewById(R.id.green_view);
         View.OnTouchListener listener = new View.OnTouchListener() {

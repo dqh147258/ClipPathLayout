@@ -216,6 +216,8 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
                     }
                 } else {
                     Log.e(TAG, "notifyPathChangedInternal: notify path changed failed , the info is null");
+                    new Throwable().printStackTrace();
+                    Log.d(TAG, "run: view : " + child.getClass().getCanonicalName());
                     mPathInfoMap.remove(key);
                 }
                 resetTempViewGetKey();
@@ -256,8 +258,16 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
             Log.e(TAG, "updatePath: view is null ,update failed");
             return;
         }
+        if (view.getVisibility() != View.VISIBLE) {
+            Log.w(TAG, "updatePath: view is invisible or gone");
+            return;
+        }
         int width = view.getWidth();
         int height = view.getHeight();
+        if (width == 0 || height == 0) {
+            Log.v(TAG, "updatePath: the width or height of view is zero");
+            return;
+        }
         info.setPath(info.getPathGenerator().generatePath(info.getPath(), view, width, height));
         if ((info.getApplyFlag() & PathInfo.APPLY_FLAG_TOUCH_ONLY) != 0) {
             info.setPathRegion(mPathRegionGenerator.generatorPathRegion(info.getPath(), info.getClipType(), width, height));

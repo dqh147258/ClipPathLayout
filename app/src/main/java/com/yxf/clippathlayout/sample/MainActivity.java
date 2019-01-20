@@ -3,6 +3,7 @@ package com.yxf.clippathlayout.sample;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,13 +12,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+
+import com.yxf.clippathlayout.transition.TransitionAdapter;
+import com.yxf.clippathlayout.transition.TransitionFragmentContainer;
+import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator;
+import com.yxf.clippathlayout.transition.generator.OvalTransitionPathGenerator;
+import com.yxf.clippathlayout.transition.generator.RandomTransitionPathGenerator;
+import com.yxf.clippathlayout.transition.generator.RhombusTransitionPathGenerator;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    private FrameLayout mContainer;
+    private TransitionFragmentContainer mContainer;
+
+    private Fragment mLastFragment;
+
+    FragmentManager mFragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +47,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mContainer = findViewById(R.id.fragment_container);
+        RandomTransitionPathGenerator generator =
+                new RandomTransitionPathGenerator(new CircleTransitionPathGenerator());
+        generator.add(new OvalTransitionPathGenerator());
+        generator.add(new RhombusTransitionPathGenerator());
+        mContainer.setAdapter(new TransitionAdapter(generator));
         switchFragment(new TransitionViewFragment());
     }
 
@@ -45,7 +61,11 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (mFragmentManager.getBackStackEntryCount() > 0) {
+                mFragmentManager.popBackStack();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -71,16 +91,16 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private Fragment last;
-
     private void switchFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (last != null) {
-            fragmentTransaction.hide(last);
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        if (mLastFragment != null) {
+            transaction.hide(mLastFragment);
+            transaction.addToBackStack(null);
         }
-        fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
-        last = fragment;
+        transaction.replace(R.id.fragment_container, fragment).commit();
+        mLastFragment = fragment;
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

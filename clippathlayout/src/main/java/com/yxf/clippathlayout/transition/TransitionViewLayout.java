@@ -10,7 +10,7 @@ import android.view.View;
 import com.yxf.clippathlayout.PathInfo;
 import com.yxf.clippathlayout.Utils;
 import com.yxf.clippathlayout.impl.ClipPathFrameLayout;
-import com.yxf.clippathlayout.transition.generator.OvalTransitionPathGenerator;
+import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator;
 
 import java.lang.ref.WeakReference;
 
@@ -21,12 +21,9 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
     private WeakReference<View> mPreviousViewReference, mCurrentViewReference;
     private PathInfo mPreviousInfo, mCurrentInfo;
 
-    private TransitionAdapter mTransitionAdapter =
-            new TransitionAdapter(new OvalTransitionPathGenerator(), this);
+    private TransitionAdapter mTransitionAdapter;
 
     private int mApplyFlag = PathInfo.APPLY_FLAG_DRAW_ONLY;
-
-    private float mPercent = 0f;
 
     public TransitionViewLayout(@NonNull Context context) {
         this(context, null);
@@ -38,6 +35,7 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
 
     public TransitionViewLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setAdapterInternal(new TransitionAdapter(new CircleTransitionPathGenerator()));
     }
 
     @Override
@@ -53,20 +51,43 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
 
     @Override
     public void setAdapter(TransitionAdapter adapter) {
+        setAdapterInternal(adapter);
+    }
+
+    private void setAdapterInternal(TransitionAdapter adapter) {
         if (adapter == null) {
             Log.e(TAG, "setAdapter: adapter is null");
             return;
         }
         mTransitionAdapter = adapter;
+        mTransitionAdapter.setTransitionLayout(this);
     }
 
     @Override
     public TransitionAdapter switchView(View view) {
+        return switchView(view, false);
+    }
+
+    /**
+     * if you want add a view , just invoke switchView directly ,
+     * do not invoke addView , it may cause some problem .
+     *
+     * @param view
+     * @return
+     */
+    @Override
+    public TransitionAdapter switchView(View view, boolean reverse) {
         if (view == null) {
             throw new NullPointerException("view is null");
         }
-        updatePreviousView(view);
+        View previous = findPreviousView(view);
+        if (previous == view) {
+            Log.w(TAG, "switchView: the top visible view is the same as the view switched");
+            return mTransitionAdapter;
+        }
+
         cancelPreviousTransition();
+
         if (view.getParent() == this) {
             view.setVisibility(VISIBLE);
             view.bringToFront();
@@ -76,64 +97,14 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
         } else {
             super.addView(view);
         }
-        mCurrentViewReference = new WeakReference<View>(view);
-        applySwitch();
+        updateViewReference(previous, view);
+        applySwitch(reverse);
         return mTransitionAdapter;
     }
 
-    public void setApplyFlag(int applyFlag) {
-        mApplyFlag = applyFlag;
-    }
-
-    private void cancelPreviousTransition() {
-        if (mPreviousInfo != null) {
-            mPreviousInfo.cancel();
-        }
-        if (mCurrentInfo != null) {
-            mCurrentInfo.cancel();
-        }
-    }
-
-    private void applySwitch() {
-        mTransitionAdapter.reset();
-        if (mPreviousViewReference != null && mPreviousViewReference.get() != null) {
-            mPreviousInfo = new PathInfo.Builder(mTransitionAdapter, mPreviousViewReference.get())
-                    .setClipType(PathInfo.CLIP_TYPE_OUT)
-                    .setApplyFlag(mApplyFlag)
-                    .create()
-                    .apply();
-        }
-        mCurrentInfo = new PathInfo.Builder(mTransitionAdapter, mCurrentViewReference.get())
-                .setClipType(PathInfo.CLIP_TYPE_IN)
-                .setApplyFlag(mApplyFlag)
-                .create()
-                .apply();
-    }
-
-    private void updatePreviousView(View current) {
-        int frontIndex = getChildCount() - 1;
-        if (frontIndex < 0) {
-            mPreviousViewReference = null;
-            return;
-        }
-        for (int i = frontIndex; i >= 0; i--) {
-            View view = getChildAt(i);
-            if (view.getVisibility() == VISIBLE) {
-                if (current == view) {
-                    mPreviousViewReference = null;
-                    return;
-                }
-                mPreviousViewReference = new WeakReference<View>(view);
-                return;
-            }
-        }
-    }
-
     @Override
-    public void setProgress(float percent) {
-        if (Float.compare(percent, 0f) == 0) {
-
-        } else if (Float.compare(percent, 1f) == 0) {
+    public void update(boolean finished) {
+        if (finished) {
             if (mPreviousInfo != null) {
                 mPreviousInfo.cancel();
             }
@@ -146,7 +117,6 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
                     previous.setVisibility(GONE);
                 }
             }
-
         } else {
             if (mPreviousViewReference != null) {
                 final View previous = mPreviousViewReference.get();
@@ -161,15 +131,78 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
         }
     }
 
-    @Override
-    public float getProgress() {
-        return mPercent;
+    public void setApplyFlag(int applyFlag) {
+        mApplyFlag = applyFlag;
+    }
+
+    private void cancelPreviousTransition() {
+        mTransitionAdapter.cancelAnimator();
+        if (mPreviousInfo != null) {
+            mPreviousInfo.cancel();
+        }
+        if (mCurrentInfo != null) {
+            mCurrentInfo.cancel();
+        }
+        mTransitionAdapter.reset();
+    }
+
+    private void applySwitch(boolean reverse) {
+        mTransitionAdapter.setReverse(reverse);
+        mTransitionAdapter.updateAnimator();
+        if (mPreviousViewReference != null && mPreviousViewReference.get() != null) {
+            mPreviousInfo = new PathInfo.Builder(mTransitionAdapter, mPreviousViewReference.get())
+                    .setClipType(reverse ? PathInfo.CLIP_TYPE_IN : PathInfo.CLIP_TYPE_OUT)
+                    .setApplyFlag(mApplyFlag)
+                    .create()
+                    .apply();
+        }
+        mCurrentInfo = new PathInfo.Builder(mTransitionAdapter, mCurrentViewReference.get())
+                .setClipType(reverse ? PathInfo.CLIP_TYPE_OUT : PathInfo.CLIP_TYPE_IN)
+                .setApplyFlag(mApplyFlag)
+                .create()
+                .apply();
+    }
+
+    protected View findPreviousView(View current) {
+        int frontIndex = getChildCount() - 1;
+        if (frontIndex < 0) {
+            return null;
+        }
+        for (int i = frontIndex; i >= 0; i--) {
+            View view = getChildAt(i);
+            if (view.getVisibility() == VISIBLE) {
+                return view;
+            }
+        }
+        return null;
+    }
+
+    private void updateViewReference(View previous, View current) {
+        if (previous != null) {
+            mPreviousViewReference = new WeakReference<View>(previous);
+        } else {
+            mPreviousViewReference = null;
+        }
+        mCurrentViewReference = new WeakReference<View>(current);
+    }
+
+    protected View getPreviousView() {
+        if (mPreviousViewReference != null) {
+            return mPreviousViewReference.get();
+        }
+        return null;
+    }
+
+    protected View getCurrentView() {
+        if (mCurrentViewReference != null) {
+            return mCurrentViewReference.get();
+        }
+        return null;
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mTransitionAdapter.getAnimator().cancel();
         cancelPreviousTransition();
     }
 }

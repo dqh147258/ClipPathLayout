@@ -10,8 +10,10 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 import java.lang.ref.WeakReference;
 
@@ -19,9 +21,24 @@ public class TransitionFragmentContainer extends TransitionViewLayout implements
 
     private static final int MESSAGE_REMOVE_VIEW = 1;
 
+    private static final int MESSAGE_START_ANIMATOR = 2;
+
     private MyHandler mHandler = new MyHandler(this);
 
-    private Runnable mRemoveViewTask;
+    private Runnable mRemoveViewTask = new Runnable() {
+        @Override
+        public void run() {
+            View view = mRemoveViewReference.get();
+            if (view != null) {
+                TransitionFragmentContainer.super.removeView(view);
+            }
+            mRemoveViewReference = null;
+        }
+    };
+
+    private WeakReference<View> mRemoveViewReference;
+
+    private ValueAnimator mValueAnimator;
 
 
     public TransitionFragmentContainer(@NonNull Context context) {
@@ -37,25 +54,40 @@ public class TransitionFragmentContainer extends TransitionViewLayout implements
     }
 
     @Override
+    protected View findPreviousView(View current) {
+        return findNextTopView(current);
+    }
+
+    @Override
     public void addView(View child) {
+        TransitionAdapter adapter = switchView(child);
         if (mHandler.hasMessages(MESSAGE_REMOVE_VIEW)) {
             mHandler.removeMessages(MESSAGE_REMOVE_VIEW);
         }
-        TransitionAdapter adapter = switchView(child);
-        ValueAnimator animator = adapter.getAnimator();
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                executeRemoveViewTask();
-            }
+
+        mValueAnimator = adapter.getAnimator();
+        mValueAnimator.setInterpolator(new AccelerateInterpolator());
+        mValueAnimator.addListener(new AnimatorListenerAdapter() {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                executeRemoveViewTask();
+                sendRemoveViewMessage();
             }
         });
-        animator.setInterpolator(new AccelerateInterpolator());
-        animator.start();
+        mValueAnimator.setInterpolator(new AccelerateInterpolator());
+        startAnimator();
+    }
+
+    private void startAnimator() {
+        View previous = getPreviousView();
+        if (previous != null) {
+            previous.setVisibility(VISIBLE);
+        }
+        View current = getCurrentView();
+        if (current != null) {
+            current.setVisibility(VISIBLE);
+        }
+        mValueAnimator.start();
     }
 
     @Override
@@ -72,9 +104,8 @@ public class TransitionFragmentContainer extends TransitionViewLayout implements
     }
 
     private void executeRemoveViewTask() {
-        if (mRemoveViewTask != null) {
+        if (mRemoveViewTask != null && mRemoveViewReference != null) {
             mRemoveViewTask.run();
-            mRemoveViewTask = null;
         }
     }
 
@@ -85,15 +116,45 @@ public class TransitionFragmentContainer extends TransitionViewLayout implements
         }
         if (mHandler.hasMessages(MESSAGE_REMOVE_VIEW)) {
             executeRemoveViewTask();
+            mHandler.removeMessages(MESSAGE_REMOVE_VIEW);
         }
-        mRemoveViewTask = new Runnable() {
+
+        View current = findNextTopView(child);
+        if (current == null) {
+            super.removeView(child);
+            return true;
+        }
+        mRemoveViewReference = new WeakReference<View>(child);
+        final TransitionAdapter adapter = switchView(current, true);
+        mValueAnimator = adapter.getAnimator();
+        mValueAnimator.setInterpolator(new DecelerateInterpolator());
+        mValueAnimator.addListener(new AnimatorListenerAdapter() {
+
             @Override
-            public void run() {
-                TransitionFragmentContainer.super.removeView(child);
+            public void onAnimationEnd(Animator animation) {
+                sendRemoveViewMessage();
             }
-        };
-        mHandler.sendEmptyMessage(MESSAGE_REMOVE_VIEW);
+        });
+        startAnimator();
         return true;
+    }
+
+    private void sendRemoveViewMessage() {
+        mHandler.sendEmptyMessage(MESSAGE_REMOVE_VIEW);
+    }
+
+    private View findNextTopView(View child) {
+        int index = getChildCount() - 1;
+        if (index < 0) {
+            return null;
+        }
+        for (int i = index; i >= 0; i--) {
+            View view = getChildAt(i);
+            if (child != view) {
+                return view;
+            }
+        }
+        return getChildAt(index);
     }
 
     @Override
@@ -101,6 +162,9 @@ public class TransitionFragmentContainer extends TransitionViewLayout implements
         switch (msg.what) {
             case MESSAGE_REMOVE_VIEW:
                 executeRemoveViewTask();
+                break;
+            case MESSAGE_START_ANIMATOR:
+                startAnimator();
                 break;
         }
         return true;

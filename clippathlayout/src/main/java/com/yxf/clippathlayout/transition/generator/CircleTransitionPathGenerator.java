@@ -1,18 +1,19 @@
 package com.yxf.clippathlayout.transition.generator;
 
-
 import android.graphics.Rect;
 
-import com.yxf.clippathlayout.pathgenerator.OvalPathGenerator;
+import com.yxf.clippathlayout.pathgenerator.CirclePathGenerator;
 
-public class OvalTransitionPathGenerator extends OvalPathGenerator implements TransitionPathGenerator {
+public class CircleTransitionPathGenerator extends CirclePathGenerator implements TransitionPathGenerator {
+
 
     @Override
     public Rect maxContainSimilarRange(Rect viewRange) {
+        int radius = Math.min(viewRange.width(), viewRange.height()) / 2;
+        int radiusX = (int) (radius * Math.sqrt(2) / 2);
+        int radiusY = (int) (radius * Math.sqrt(2) / 2);
         int centerX = viewRange.centerX();
         int centerY = viewRange.centerY();
-        int radiusX = (int) (viewRange.width() * Math.cos(Math.PI / 4) / 2);
-        int radiusY = radiusX * viewRange.height() / viewRange.width();
         viewRange.set(centerX - radiusX, centerY - radiusY, centerX + radiusX, centerY + radiusY);
         return viewRange;
     }
