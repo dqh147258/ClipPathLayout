@@ -12,6 +12,8 @@ public class Utils {
 
     private static final String TAG = getTAG(Utils.class);
 
+    public static boolean DEUBG = false;
+
     public static void clipOutPath(Canvas canvas, Path path) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             canvas.clipOutPath(path);

@@ -1,6 +1,7 @@
 package com.yxf.clippathlayout.transition;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -14,9 +15,9 @@ import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator
 
 import java.lang.ref.WeakReference;
 
-public class TransitionViewLayout extends ClipPathFrameLayout implements TransitionLayout {
+public class TransitionFrameLayout extends ClipPathFrameLayout implements TransitionLayout {
 
-    private static final String TAG = Utils.getTAG(TransitionViewLayout.class);
+    private static final String TAG = Utils.getTAG(TransitionFrameLayout.class);
 
     private WeakReference<View> mPreviousViewReference, mCurrentViewReference;
     private PathInfo mPreviousInfo, mCurrentInfo;
@@ -25,15 +26,15 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
 
     private int mApplyFlag = PathInfo.APPLY_FLAG_DRAW_ONLY;
 
-    public TransitionViewLayout(@NonNull Context context) {
+    public TransitionFrameLayout(@NonNull Context context) {
         this(context, null);
     }
 
-    public TransitionViewLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TransitionFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public TransitionViewLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TransitionFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setAdapterInternal(new TransitionAdapter(new CircleTransitionPathGenerator()));
     }
@@ -76,7 +77,7 @@ public class TransitionViewLayout extends ClipPathFrameLayout implements Transit
      * @return
      */
     @Override
-    public TransitionAdapter switchView(View view, boolean reverse) {
+    public TransitionAdapter switchView(final View view, boolean reverse) {
         if (view == null) {
             throw new NullPointerException("view is null");
         }

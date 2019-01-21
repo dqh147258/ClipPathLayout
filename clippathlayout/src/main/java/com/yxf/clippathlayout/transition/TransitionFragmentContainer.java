@@ -10,14 +10,13 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
 import java.lang.ref.WeakReference;
 
-public class TransitionFragmentContainer extends TransitionViewLayout implements Handler.Callback {
+public class TransitionFragmentContainer extends TransitionFrameLayout implements Handler.Callback {
 
     private static final int MESSAGE_REMOVE_VIEW = 1;
 

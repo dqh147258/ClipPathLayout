@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yxf.clippathlayout.transition.TransitionFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/blue_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#880000ff"
+        android:gravity="center"
+        android:text="蓝色界面"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/green_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#8800ff00"
+        android:gravity="center"
+        android:text="绿色界面"
+        android:textSize="30sp" />
+
+</com.yxf.clippathlayout.transition.TransitionFrameLayout>

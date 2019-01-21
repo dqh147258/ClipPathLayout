@@ -7,6 +7,7 @@ import android.graphics.PointF;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -145,6 +146,8 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
                 Path path = info.getPath();
                 if (path != null) {
                     Utils.clipPath(canvas, path, info.getClipType());
+                } else {
+                    Log.d(TAG, "beforeDrawChild: path is null , hash code : " + info.hashCode());
                 }
             }
         }
@@ -215,9 +218,7 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
                         mPathInfoMap.remove(key);
                     }
                 } else {
-                    Log.e(TAG, "notifyPathChangedInternal: notify path changed failed , the info is null");
-                    new Throwable().printStackTrace();
-                    Log.d(TAG, "run: view : " + child.getClass().getCanonicalName());
+                    Log.d(TAG, "notifyPathChangedInternal: notify path changed failed , the info is null");
                     mPathInfoMap.remove(key);
                 }
                 resetTempViewGetKey();

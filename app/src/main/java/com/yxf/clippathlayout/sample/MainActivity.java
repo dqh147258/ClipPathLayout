@@ -1,5 +1,6 @@
 package com.yxf.clippathlayout.sample;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity
         generator.add(new OvalTransitionPathGenerator());
         generator.add(new RhombusTransitionPathGenerator());
         mContainer.setAdapter(new TransitionAdapter(generator));
-        switchFragment(new TransitionViewFragment());
+        switchFragment(new ScrollTransitionFragment());
     }
 
     @Override
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity
             transaction.hide(mLastFragment);
             transaction.addToBackStack(null);
         }
-        transaction.replace(R.id.fragment_container, fragment).commit();
+        transaction.add(R.id.fragment_container, fragment).commit();
         mLastFragment = fragment;
     }
 
@@ -116,8 +117,10 @@ public class MainActivity extends AppCompatActivity
             switchFragment(new RemoteControllerFragment());
         } else if (id == R.id.yin_yang_fish) {
             switchFragment(new YinYangFishFragment());
-        } else if (id == R.id.nav_transition_view) {
-            switchFragment(new TransitionViewFragment());
+        } else if (id == R.id.nav_view_transition) {
+            switchFragment(new ViewTransitionFragment());
+        } else if (id == R.id.nav_scroll_transition) {
+            switchFragment(new ScrollTransitionFragment());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

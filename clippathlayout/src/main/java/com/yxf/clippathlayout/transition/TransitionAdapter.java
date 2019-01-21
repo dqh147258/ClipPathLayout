@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
@@ -15,7 +16,7 @@ import com.yxf.clippathlayout.transition.generator.TransitionPathGenerator;
 
 public class TransitionAdapter implements PathGenerator, ProgressController {
 
-    private static final String TAG = Utils.getTAG(TransitionViewLayout.class);
+    private static final String TAG = Utils.getTAG(TransitionFrameLayout.class);
 
     public static final int PATH_CENTER_VIEW_CENTER = -1;
 
@@ -142,7 +143,7 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
         if (percent < 0f) {
             percent = 0f;
         }
-        if ((Float.compare(mPercent, percent) == 0)) {
+        if (Float.compare(mPercent, percent) == 0) {
             //percent not change ,return
             return;
         }
@@ -174,6 +175,7 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
     }
 
     public ValueAnimator getAnimator() {
+        mTransitionLayout.update(false);
         return getAnimatorInternal();
     }
 
@@ -188,6 +190,7 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
         float end = mReverse ? 0f : 1f;
         mValueAnimator = ValueAnimator.ofFloat(start, end);
         mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 setProgress((Float) animation.getAnimatedValue());
