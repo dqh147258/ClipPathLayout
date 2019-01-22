@@ -14,23 +14,23 @@ Android中实现不规则图形的布局
 
 将方形图片裁剪成圆形并且让圆形View的4角不接收触摸事件
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/circle.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/circle.gif)
 
 很多游戏都会有方向键,曾经我也做过一个小游戏,但是在做方向键的时候遇到一个问题,4个方向按钮的位置会有重叠,导致局部地方会发生误差.
 当时没有特别好的解决办法,只能做自定义View,而自定义View特别麻烦,需要重写onTouchEvent和onDraw计算落点属于哪个方向,并增加点击效果.
 简单的自定义View会丧失很多Android自带的一些特性,要支持这些特性又繁琐而复杂.
 下面借助于CLipPathLayout用4个菱形按钮实现的方向控制键很好的解决了这个问题
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/control_button.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/control_button.gif)
 
 对于遥控器的按键的模拟同样有上述问题,一般只能采用自定义View实现,较为繁琐.
 以下是借助于ClipPathLayout实现的遥控器按钮,由于没有美工切图,比较丑,将就下吧
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/remote_controller.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/remote_controller.gif)
 
 甚至我们可以将不连续的图形变成一个View,比如做一个阴阳鱼的按钮
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/yin_yang_fish.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/yin_yang_fish.gif)
 
 
 ### 转场动画
@@ -40,15 +40,15 @@ Android中实现不规则图形的布局
 沪江开心词场里使用的就是这种动画,这种动画很棒,但是也有一个小缺点,就是在切换的过程中,切换用的View和即将要切换的View没有什么关系.
 借助于ClipPathLayout扩展的TransitionFrameLayout也可以实现较为和谐的切换效果,由于是示例,不写太复杂的场景,以下仅用两个TextView作为展示
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/view_transition.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/view_transition.gif)
 
 在浏览QQ空间和使用QQ浏览器的过程看到腾讯的广告切换效果也是很不错的,这里借助于TransitionFrameLayout也可以实现这种效果
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/scroll_transition_2.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/scroll_transition_2.gif)
 
 其实大部分的场景切换应该是用在Fragment中,这里也用TransitionFragmentContainer实现了Fragment的场景切换效果
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/fragment_transition_2.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/fragment_transition_2.gif)
 
 ## 使用
 
@@ -195,7 +195,7 @@ Path的应用标志,有如下几种
 
 切换效果如下
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/select_apply_flag.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/select_apply_flag.gif)
 
 #### ClipType
 
@@ -208,7 +208,7 @@ Path的裁剪模式,有如下两种
 
 切换效果如下
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/select_clip_mode.gif)
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/select_clip_mode.gif)
 
 
 ### 自定义ClipPathLayout
@@ -221,7 +221,7 @@ Path的裁剪模式,有如下两种
 ClipPathLayoutDelegate mClipPathLayoutDelegate = new ClipPathLayoutDelegate(this);
 ```
 
-并将所有ClipPathLayout接口的实现都委派给CLipPathLayoutDelegate去实现.
+并将所有ClipPathLayout接口的实现都委派给ClipPathLayoutDelegate去实现.
 
 这里需要注意两点:
 
@@ -237,7 +237,7 @@ ClipPathLayoutDelegate mClipPathLayoutDelegate = new ClipPathLayoutDelegate(this
     }
 ```
 
-- requestLayout方法也需要重写,这属于ViewGroup和ClipPathLayout共有的方法,这个方法会在父类的ViewGroup的构造方法中调用,在父类构造方法中,mClipPathLayoutDelegate还没有初始化,如果直接调用会报空指针,所以需要添加空判断.
+- requestLayout方法也需要重写,这属于ViewGroup和ClipPathLayout共有的方法,这个方法会在父类的ViewGroup的构造方法中调用,在父类构造方法被调用时,mClipPathLayoutDelegate还没有初始化,如果直接调用会报空指针,所以需要添加空判断.
 
 ```
     @Override
@@ -336,11 +336,11 @@ public class ClipPathFrameLayout extends FrameLayout implements ClipPathLayout {
 
 这个布局继承于FrameLayout,用于两个View的场景切换.
 
-要求两个子View大小宽高需要一致,位置也一致.一般不做什么设置的话,FrameLayout就是如此的.
+要求两个子View大小宽高需要一致,位置也一致.一般不做什么特殊设置的话,FrameLayout默认就是如此的.
 
 **这个ViewGroup限定只显示一个View**,如果在xml中添加了多个View,**只有最后一个View会显示出来**.
 
-如果需要添加一个View或者将其中隐藏的View显示出来请调用TransitionFrameLayout的switchView方法,**不要直接调用addView或者setVisibility**,可能会造成不太友好的画面.
+如果需要添加一个View或者将其中隐藏的View显示出来请调用TransitionFrameLayout的switchView方法,**不要直接调用addView或者setVisibility**,可能会造成不太友好的界面效果.
 
 ##### 使用
 
@@ -433,7 +433,9 @@ adapter.finish();
 ```
 来通知转场结束了.
 
-具体效果请查看之前的效果展示.
+直接使用adapter.animate()的效果如下
+
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/view_transition.gif)
 
 #### TransitionFragmentContainer
 
@@ -441,7 +443,9 @@ adapter.finish();
 
 直接像FrameLayout作为Fragment容器做动态添加删除即可.
 
-具体效果移步效果展示
+效果如下
+
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/fragment_transition_2.gif)
 
 #### TransitionAdapter
 
@@ -479,4 +483,4 @@ public interface TransitionPathGenerator extends PathGenerator {
 
 以上两种转场动画容器都有setAdapter方法,可以替换掉默认的TransitionAdapter.
 
-从TransitionFrameLayout.switchView中获得Adapter后,还可以通过setPathCenter来控制Path的扩张和收缩中心.
+从TransitionFrameLayout.switchView中获得Adapter后,还可以通过setPathCenter来控制Path的扩张和收缩中心,默认是PathCenter是View中心.
