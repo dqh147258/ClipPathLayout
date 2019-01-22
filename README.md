@@ -1,5 +1,5 @@
 # ClipPathLayout
-[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.0) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.0/link)
+[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.1) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.0/link)
 [![Platform](https://img.shields.io/badge/platform-android-blue.svg)]()
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -82,7 +82,7 @@ allprojects {
 
 在app module中的build.gradle中添加依赖
 ```
-implementation 'com.yxf:clippathlayout:1.0.0'
+implementation 'com.yxf:clippathlayout:1.0.+'
 ```
 
 ### 不规则图形布局的使用
