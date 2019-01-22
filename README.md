@@ -44,11 +44,11 @@ Android中实现不规则图形的布局
 
 在浏览QQ空间和使用QQ浏览器的过程看到腾讯的广告切换效果也是很不错的,这里借助于TransitionFrameLayout也可以实现这种效果
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/scroll_transition.gif)
+![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/scroll_transition_2.gif)
 
 其实大部分的场景切换应该是用在Fragment中,这里也用TransitionFragmentContainer实现了Fragment的场景切换效果
 
-![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/fragment_transition.gif)
+![](https://resource-1255703580.cos.ap-shanghai.myqcloud.com/ClipPathLayout/fragment_transition_2.gif)
 
 ## 使用
 
