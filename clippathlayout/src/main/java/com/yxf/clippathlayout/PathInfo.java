@@ -136,6 +136,10 @@ public class PathInfo {
         private int mApplyFlag = APPLY_FLAG_DRAW_AND_TOUCH;
         private int mClipType = CLIP_TYPE_IN;
 
+        /**
+         * @param generator Path生成器
+         * @param view 实现了ClipPathLayout接口的ViewGroup的子View
+         */
         public Builder(PathGenerator generator, View view) {
             if (generator == null) {
                 throw new NullPointerException("PathGenerator is null");
