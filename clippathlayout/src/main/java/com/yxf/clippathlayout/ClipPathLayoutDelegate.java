@@ -260,7 +260,7 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
             return;
         }
         if (view.getVisibility() != View.VISIBLE) {
-            Log.w(TAG, "updatePath: view is invisible or gone");
+            Log.v(TAG, "updatePath: view is invisible or gone");
             return;
         }
         int width = view.getWidth();

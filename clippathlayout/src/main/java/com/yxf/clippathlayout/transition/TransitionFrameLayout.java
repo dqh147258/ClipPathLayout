@@ -84,6 +84,7 @@ public class TransitionFrameLayout extends ClipPathFrameLayout implements Transi
         View previous = findPreviousView(view);
         if (previous == view) {
             Log.w(TAG, "switchView: the top visible view is the same as the view switched");
+            new Throwable().printStackTrace();
             return mTransitionAdapter;
         }
 
@@ -125,8 +126,8 @@ public class TransitionFrameLayout extends ClipPathFrameLayout implements Transi
                     notifyPathChanged(previous);
                 }
             }
-            final View current = mCurrentViewReference.get();
-            if (current != null) {
+            final View current;
+            if (mCurrentViewReference != null && (current = mCurrentViewReference.get()) != null) {
                 notifyPathChanged(current);
             }
         }

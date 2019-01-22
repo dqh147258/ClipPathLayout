@@ -1,6 +1,5 @@
 package com.yxf.clippathlayout.sample;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -11,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,13 +21,15 @@ import com.yxf.clippathlayout.transition.generator.OvalTransitionPathGenerator;
 import com.yxf.clippathlayout.transition.generator.RandomTransitionPathGenerator;
 import com.yxf.clippathlayout.transition.generator.RhombusTransitionPathGenerator;
 
+import java.lang.ref.WeakReference;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private TransitionFragmentContainer mContainer;
 
-    private Fragment mLastFragment;
+    private WeakReference<Fragment> mLastFragmentReference;
 
     FragmentManager mFragmentManager = getSupportFragmentManager();
 
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         generator.add(new OvalTransitionPathGenerator());
         generator.add(new RhombusTransitionPathGenerator());
         mContainer.setAdapter(new TransitionAdapter(generator));
-        switchFragment(new ScrollTransitionFragment());
+        switchFragment(new ScrollTransitionFragment(), false);
     }
 
     @Override
@@ -93,13 +95,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void switchFragment(Fragment fragment) {
+        switchFragment(fragment, true);
+    }
+
+    private void switchFragment(Fragment fragment, boolean addToBackStack) {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        if (mLastFragment != null) {
-            transaction.hide(mLastFragment);
+        Fragment f;
+        if (mLastFragmentReference != null && (f = mLastFragmentReference.get()) != null) {
+            transaction.hide(f);
+        }
+        if (addToBackStack) {
             transaction.addToBackStack(null);
         }
         transaction.add(R.id.fragment_container, fragment).commit();
-        mLastFragment = fragment;
+        mLastFragmentReference = new WeakReference<Fragment>(fragment);
     }
 
 

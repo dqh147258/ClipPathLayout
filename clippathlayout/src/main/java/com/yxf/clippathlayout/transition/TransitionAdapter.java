@@ -175,7 +175,6 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
     }
 
     public ValueAnimator getAnimator() {
-        mTransitionLayout.update(false);
         return getAnimatorInternal();
     }
 

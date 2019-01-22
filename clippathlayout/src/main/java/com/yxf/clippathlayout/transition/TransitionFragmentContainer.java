@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -63,7 +64,6 @@ public class TransitionFragmentContainer extends TransitionFrameLayout implement
         if (mHandler.hasMessages(MESSAGE_REMOVE_VIEW)) {
             mHandler.removeMessages(MESSAGE_REMOVE_VIEW);
         }
-
         mValueAnimator = adapter.getAnimator();
         mValueAnimator.setInterpolator(new AccelerateInterpolator());
         mValueAnimator.addListener(new AnimatorListenerAdapter() {
@@ -108,23 +108,23 @@ public class TransitionFragmentContainer extends TransitionFrameLayout implement
         }
     }
 
-    private boolean removeViewInternal(final View child) {
+    private void removeViewInternal(final View child) {
         if (child.getVisibility() != VISIBLE) {
             super.removeView(child);
-            return true;
+            return;
         }
-        if (mHandler.hasMessages(MESSAGE_REMOVE_VIEW)) {
-            executeRemoveViewTask();
-            mHandler.removeMessages(MESSAGE_REMOVE_VIEW);
-        }
-
+        executeRemoveViewTask();
         View current = findNextTopView(child);
         if (current == null) {
-            super.removeView(child);
-            return true;
+            mRemoveViewReference = new WeakReference<View>(child);
+            sendRemoveViewMessage();
+            return;
+        }
+        final TransitionAdapter adapter = switchView(current, true);
+        if (mHandler.hasMessages(MESSAGE_REMOVE_VIEW)) {
+            mHandler.removeMessages(MESSAGE_REMOVE_VIEW);
         }
         mRemoveViewReference = new WeakReference<View>(child);
-        final TransitionAdapter adapter = switchView(current, true);
         mValueAnimator = adapter.getAnimator();
         mValueAnimator.setInterpolator(new DecelerateInterpolator());
         mValueAnimator.addListener(new AnimatorListenerAdapter() {
@@ -135,7 +135,7 @@ public class TransitionFragmentContainer extends TransitionFrameLayout implement
             }
         });
         startAnimator();
-        return true;
+        return;
     }
 
     private void sendRemoveViewMessage() {
@@ -153,7 +153,7 @@ public class TransitionFragmentContainer extends TransitionFrameLayout implement
                 return view;
             }
         }
-        return getChildAt(index);
+        return null;
     }
 
     @Override

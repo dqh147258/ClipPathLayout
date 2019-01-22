@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yxf.clippathlayout.PathInfo;
 import com.yxf.clippathlayout.transition.TransitionAdapter;
 import com.yxf.clippathlayout.transition.TransitionFrameLayout;
 import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator;
