@@ -484,3 +484,21 @@ public interface TransitionPathGenerator extends PathGenerator {
 以上两种转场动画容器都有setAdapter方法,可以替换掉默认的TransitionAdapter.
 
 从TransitionFrameLayout.switchView中获得Adapter后,还可以通过setPathCenter来控制Path的扩张和收缩中心,默认是PathCenter是View中心.
+
+## 原理解析
+
+[Android中不规则形状View的布局实现](https://www.jianshu.com/p/178c9efcdb44)
+
+[基于ClipPathLayout转场动画布局的实现](https://www.jianshu.com/p/0c7d4214fabe)
+
+---
+
+好了ClipPathLayout讲完了,一讲完ClipPathLayout我就想起来,我合适的坑位还没找到,要不我们两开花一波.
+
+本人从事Android开发两年,由于年少无知,很任性的在这个所谓的互联网寒冬下辞职了,现在还没找到合适的坑.
+
+如果大佬们正在招人,而且觉得我还可以抢救下,不妨将公司和职位信息发到我邮箱(dqh14258@gmail.com).
+如果合适我会回复简历,当然不合适看到也会回复啦,不过请务必附带公司名称和职位信息,不然不会回复简历.
+
+当前在上海,不过马上滚蛋回家了,年后准备去深圳 , 如果接受电话和远程视频面试的话接受上海 , 杭州等地的公司.
+
