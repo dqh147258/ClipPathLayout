@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
 
 import com.yxf.clippathlayout.Utils;
 import com.yxf.clippathlayout.pathgenerator.PathGenerator;
@@ -25,6 +26,8 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
     public static final int DEFAULT_ANIMATOR_DURATION = 600;
 
     private int mDefaultDuration = DEFAULT_ANIMATOR_DURATION;
+
+    private Interpolator mDefaultInterpolator = new AccelerateInterpolator();
 
     private TransitionPathGenerator mTransitionPathGenerator;
     private TransitionLayout mTransitionLayout;
@@ -94,6 +97,13 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
 
     public void setDefaultDuration(int defaultDuration) {
         mDefaultDuration = defaultDuration;
+    }
+
+    public void setDefaultInterpolator(Interpolator defaultInterpolator) {
+        if (defaultInterpolator == null) {
+            throw new NullPointerException("Interpolator is null");
+        }
+        mDefaultInterpolator = defaultInterpolator;
     }
 
     @Override
@@ -170,7 +180,7 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
 
     public void animate() {
         ValueAnimator animator = getAnimatorInternal();
-        animator.setInterpolator(new AccelerateInterpolator());
+        animator.setInterpolator(mDefaultInterpolator);
         animator.start();
     }
 
