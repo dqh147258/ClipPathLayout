@@ -1,5 +1,5 @@
 # ClipPathLayout
-[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.1) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.0/link)
+[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.2) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.2/link)
 [![Platform](https://img.shields.io/badge/platform-android-blue.svg)]()
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -16,10 +16,10 @@ Android中实现不规则图形的布局
 
 ![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/circle.gif)
 
-很多游戏都会有方向键,曾经我也做过一个小游戏,但是在做方向键的时候遇到一个问题,4个方向按钮的位置会有重叠,导致局部地方会发生误差.
+很多游戏都会有方向键,曾经我也做过一个小游戏,但是在做方向键的时候遇到一个问题,4个方向按钮的位置会有重叠,导致局部地方会发生误触.
 当时没有特别好的解决办法,只能做自定义View,而自定义View特别麻烦,需要重写onTouchEvent和onDraw计算落点属于哪个方向,并增加点击效果.
 简单的自定义View会丧失很多Android自带的一些特性,要支持这些特性又繁琐而复杂.
-下面借助于CLipPathLayout用4个菱形按钮实现的方向控制键很好的解决了这个问题
+下面借助于ClipPathLayout用4个菱形按钮实现的方向控制键很好的解决了这个问题
 
 ![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/control_button.gif)
 
@@ -135,6 +135,10 @@ new PathInfo.Builder(new CirclePathGenerator(), mImageView)
 ```
 
 搞定!运行就可以看到一个圆形的View.
+
+![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/circle.gif)
+
+和效果展示上的这个图差不多,不过这张图多了几个按钮,然后那个圆形View有个绿色背景,那个是用来做对比的,在那个View之下添加了一个绿色的View,不要在意这些细节......
 
 对其中使用到的参数和方法做下说明
 
@@ -461,11 +465,14 @@ public TransitionAdapter(TransitionPathGenerator generator)
 public interface TransitionPathGenerator extends PathGenerator {
 
     /*
-     * 返回path在viewRange中包含的最大的和viewRange相似的的矩形区域
+     * 返回path在viewRange中包含的最大的和viewRange相似的的矩形区域,
+     * 返回的矩形区域中心需要和参数矩形区域中心一致,
+     * 为了尽量减少内存抖动,建议使用参数传入的矩形修改数值后返回
      */
     Rect maxContainSimilarRange(Rect viewRange);
 
 }
+
 ```
 由于当前没有很好的办法来判断Path内所能放下的最大矩形区域,所以这里目前需要生成器自己提供一个区域.
 

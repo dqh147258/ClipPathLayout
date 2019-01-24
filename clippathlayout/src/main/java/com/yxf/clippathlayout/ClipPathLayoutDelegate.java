@@ -23,7 +23,7 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
 
     private HashMap<ViewKey, PathInfo> mPathInfoMap = new HashMap<ViewKey, PathInfo>();
 
-    private PathRegionGenerator mPathRegionGenerator = PathRegionGenerators.createBitmapPathRegionGenerator();
+    private PathRegionGenerator mPathRegionGenerator = PathRegionGenerators.createNativePathRegionGenerator();
 
     // Lazily-created holder for point computations.
     private float[] mTempPoint;

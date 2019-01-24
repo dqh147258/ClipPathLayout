@@ -24,4 +24,13 @@ public class PathRegionGenerators {
         };
     }
 
+    public static PathRegionGenerator createNativePathRegionGenerator() {
+        return new PathRegionGenerator() {
+            @Override
+            public PathRegion generatorPathRegion(Path path, int clipType, int width, int height) {
+                return new NativePathRegion(path, clipType);
+            }
+        };
+    }
+
 }
