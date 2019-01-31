@@ -28,5 +28,5 @@ task clean(type: Delete) {
 }
 
 ext {
-    CLIP_PATH_LAYOUT_VERSION = '1.0.2'
+    CLIP_PATH_LAYOUT_VERSION = '1.0.3'
 }

@@ -6,7 +6,6 @@ import android.animation.ValueAnimator;
 import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -29,7 +28,7 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
 
     private Interpolator mDefaultInterpolator = new AccelerateInterpolator();
 
-    private TransitionPathGenerator mTransitionPathGenerator;
+    private PathGenerator mPathGenerator;
     private TransitionLayout mTransitionLayout;
 
     private int mPathCenterX = PATH_CENTER_VIEW_CENTER, mPathCenterY = PATH_CENTER_VIEW_CENTER;
@@ -54,11 +53,13 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
 
     private boolean mReverse = false;
 
-    public TransitionAdapter(TransitionPathGenerator generator) {
+    private boolean immediately = false;
+
+    public TransitionAdapter(PathGenerator generator) {
         if (generator == null) {
             throw new NullPointerException("TransitionPathGenerator is null");
         }
-        mTransitionPathGenerator = generator;
+        mPathGenerator = generator;
     }
 
     void setTransitionLayout(TransitionLayout transitionLayout) {
@@ -114,11 +115,9 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
         if (mPathCenterY == PATH_CENTER_VIEW_CENTER) {
             mPathCenterY = height / 2;
         }
-        if (Float.compare(mScale, INVALID_SCALE) == 0 || mInvalidateOriginPath) {
-            calculateScale(width, height);
-        }
         if (mInvalidateOriginPath) {
-            mOriginPath = mTransitionPathGenerator.generatePath(mOriginPath, view, width, height);
+            mOriginPath = mPathGenerator.generatePath(mOriginPath, view, width, height);
+            calculateScale(width, height);
         }
         transformPath(width, height);
         mInvalidateOriginPath = false;
@@ -135,18 +134,33 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
     }
 
     private void calculateScale(int width, int height) {
-        mRect.set(0, 0, width, height);
-        Rect rect = mTransitionPathGenerator.maxContainSimilarRange(mRect);
-        float left, top, right, bottom;
+        int radiusX, radiusY;
+        radiusX = Math.max(mPathCenterX, width - mPathCenterX);
+        radiusY = Math.max(mPathCenterY, height - mPathCenterY);
+        int centerX = width / 2;
+        int centerY = height / 2;
+
+        int x, y;
+        if (width / (height * 1f) > radiusX / (radiusY * 1f)) {
+            x = radiusY * width / height;
+            y = height / 2;
+        } else {
+            x = width / 2;
+            y = radiusX * height / width;
+        }
+        mRect.set(centerX - x, centerY - y, centerX + x, centerY + y);
+        Rect rect;
+        if (mPathGenerator instanceof TransitionPathGenerator) {
+            rect = ((TransitionPathGenerator) mPathGenerator).maxContainSimilarRange(mRect, width, height);
+        } else {
+            rect = Utils.maxContainSimilarRange(mOriginPath, mRect, width, height);
+        }
         if (rect.width() <= 0 || rect.height() <= 0) {
             throw new RuntimeException("calculateScale: the width or height of the rect get from maxContainSimilarRange is illegal , rect : " + rect);
         }
-        left = mPathCenterX * 2 / (rect.width() * 1f);
-        top = mPathCenterY * 2 / (rect.height() * 1f);
-        right = (width - mPathCenterX) * 2 / (rect.width() * 1f);
-        bottom = (height - mPathCenterY) * 2 / (rect.height() * 1f);
-        mScale = Math.max(Math.max(left, right), Math.max(top, bottom));
+        mScale = Math.max(radiusX * 2 / (rect.width() * 1f), radiusY * 2 / (rect.height() * 1f));
     }
+
 
     @Override
     public void setProgress(float percent) {
@@ -176,6 +190,17 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
 
     public ProgressController getController() {
         return this;
+    }
+
+    public boolean isImmediately() {
+        return immediately;
+    }
+
+    public void setImmediately(boolean immediately) {
+        this.immediately = immediately;
+        if (mValueAnimator != null && !mValueAnimator.isRunning()) {
+            mValueAnimator.setDuration(0);
+        }
     }
 
     public void animate() {
@@ -212,7 +237,11 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
                 finishInternal();
             }
         });
-        mValueAnimator.setDuration(mDefaultDuration);
+        if (immediately) {
+            mValueAnimator.setDuration(0);
+        } else {
+            mValueAnimator.setDuration(mDefaultDuration);
+        }
     }
 
     private ValueAnimator getAnimatorInternal() {

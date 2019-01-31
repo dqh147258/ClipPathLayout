@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.yxf.clippathlayout.Utils;
+import com.yxf.clippathlayout.pathgenerator.PathGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,51 +16,58 @@ public class RandomTransitionPathGenerator implements TransitionPathGenerator {
     private static final String TAG = Utils.getTAG(RandomTransitionPathGenerator.class);
 
 
-    private List<TransitionPathGenerator> mTransitionPathGeneratorList = new ArrayList<TransitionPathGenerator>();
+    private List<PathGenerator> mPathGeneratorList = new ArrayList<PathGenerator>();
 
-    private TransitionPathGenerator mTransitionPathGenerator;
+    private PathGenerator mPathGenerator;
 
-    public RandomTransitionPathGenerator(TransitionPathGenerator defaultGenerator) {
+    private Path mPath;
+
+    public RandomTransitionPathGenerator(PathGenerator defaultGenerator) {
         if (defaultGenerator == null) {
             throw new NullPointerException("default generator is null");
         }
         addInternal(defaultGenerator);
     }
 
-    public void add(TransitionPathGenerator generator) {
+    public void add(PathGenerator generator) {
         addInternal(generator);
     }
 
-    private void addInternal(TransitionPathGenerator generator) {
+    private void addInternal(PathGenerator generator) {
         if (generator == null) {
             Log.e(TAG, "add: generator is null");
             return;
         }
-        mTransitionPathGeneratorList.add(generator);
+        mPathGeneratorList.add(generator);
     }
 
-    public void clear(TransitionPathGenerator defaultGenerator) {
+    public void clear(PathGenerator defaultGenerator) {
         if (defaultGenerator == null) {
             throw new NullPointerException("default generator is null");
         }
-        mTransitionPathGeneratorList.clear();
+        mPathGeneratorList.clear();
         addInternal(defaultGenerator);
     }
 
     @Override
-    public Rect maxContainSimilarRange(Rect viewRange) {
-        updateGenerator();
-        return mTransitionPathGenerator.maxContainSimilarRange(viewRange);
+    public Rect maxContainSimilarRange(Rect similar, int boundWidth, int boundHeight) {
+        if (mPathGenerator instanceof TransitionPathGenerator) {
+            return ((TransitionPathGenerator) mPathGenerator).maxContainSimilarRange(similar, boundWidth, boundHeight);
+        } else {
+            return Utils.maxContainSimilarRange(mPath, similar, boundWidth, boundHeight);
+        }
     }
 
     @Override
     public Path generatePath(Path old, View view, int width, int height) {
-        return mTransitionPathGenerator.generatePath(old, view, width, height);
+        updateGenerator();
+        mPath = mPathGenerator.generatePath(old, view, width, height);
+        return mPath;
     }
 
     private void updateGenerator() {
-        int size = mTransitionPathGeneratorList.size();
+        int size = mPathGeneratorList.size();
         int index = (int) (Math.random() * size);
-        mTransitionPathGenerator = mTransitionPathGeneratorList.get(index);
+        mPathGenerator = mPathGeneratorList.get(index);
     }
 }

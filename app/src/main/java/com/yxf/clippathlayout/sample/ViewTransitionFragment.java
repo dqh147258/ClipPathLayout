@@ -9,13 +9,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.yxf.clippathlayout.PathInfo;
+import com.yxf.clippathlayout.pathgenerator.CirclePathGenerator;
+import com.yxf.clippathlayout.pathgenerator.OvalPathGenerator;
+import com.yxf.clippathlayout.pathgenerator.RhombusPathGenerator;
 import com.yxf.clippathlayout.transition.TransitionAdapter;
 import com.yxf.clippathlayout.transition.TransitionFrameLayout;
-import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator;
-import com.yxf.clippathlayout.transition.generator.OvalTransitionPathGenerator;
 import com.yxf.clippathlayout.transition.generator.RandomTransitionPathGenerator;
-import com.yxf.clippathlayout.transition.generator.RhombusTransitionPathGenerator;
 
 public class ViewTransitionFragment extends Fragment {
 
@@ -29,9 +28,9 @@ public class ViewTransitionFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mLayout = (TransitionFrameLayout) inflater.inflate(R.layout.fragment_view_transition, null);
         RandomTransitionPathGenerator generator =
-                new RandomTransitionPathGenerator(new CircleTransitionPathGenerator());
-        generator.add(new OvalTransitionPathGenerator());
-        generator.add(new RhombusTransitionPathGenerator());
+                new RandomTransitionPathGenerator(new CirclePathGenerator());
+        generator.add(new OvalPathGenerator());
+        generator.add(new RhombusPathGenerator());
         mLayout.setAdapter(new TransitionAdapter(generator));
         mBlueView = mLayout.findViewById(R.id.blue_view);
         mGreenView = mLayout.findViewById(R.id.green_view);

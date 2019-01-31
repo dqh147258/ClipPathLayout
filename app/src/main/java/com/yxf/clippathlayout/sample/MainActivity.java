@@ -10,16 +10,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.yxf.clippathlayout.pathgenerator.CirclePathGenerator;
+import com.yxf.clippathlayout.pathgenerator.OvalPathGenerator;
+import com.yxf.clippathlayout.pathgenerator.RhombusPathGenerator;
 import com.yxf.clippathlayout.transition.TransitionAdapter;
 import com.yxf.clippathlayout.transition.TransitionFragmentContainer;
-import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator;
-import com.yxf.clippathlayout.transition.generator.OvalTransitionPathGenerator;
 import com.yxf.clippathlayout.transition.generator.RandomTransitionPathGenerator;
-import com.yxf.clippathlayout.transition.generator.RhombusTransitionPathGenerator;
 
 import java.lang.ref.WeakReference;
 
@@ -32,6 +31,8 @@ public class MainActivity extends AppCompatActivity
     private WeakReference<Fragment> mLastFragmentReference;
 
     FragmentManager mFragmentManager = getSupportFragmentManager();
+
+    private TransitionAdapter mTransitionAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +52,12 @@ public class MainActivity extends AppCompatActivity
 
         mContainer = findViewById(R.id.fragment_container);
         RandomTransitionPathGenerator generator =
-                new RandomTransitionPathGenerator(new CircleTransitionPathGenerator());
-        generator.add(new OvalTransitionPathGenerator());
-        generator.add(new RhombusTransitionPathGenerator());
-        mContainer.setAdapter(new TransitionAdapter(generator));
+                new RandomTransitionPathGenerator(new CirclePathGenerator());
+        generator.add(new OvalPathGenerator());
+        generator.add(new RhombusPathGenerator());
+        mTransitionAdapter = new TransitionAdapter(generator);
+        mTransitionAdapter.setImmediately(true);
+        mContainer.setAdapter(mTransitionAdapter);
         switchFragment(new ScrollTransitionFragment(), false);
     }
 
@@ -95,6 +98,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void switchFragment(Fragment fragment) {
+        if (mTransitionAdapter.isImmediately()) {
+            mTransitionAdapter.setImmediately(false);
+        }
         switchFragment(fragment, true);
     }
 

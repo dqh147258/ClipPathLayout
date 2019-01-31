@@ -1,5 +1,5 @@
 # ClipPathLayout
-[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.2) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.2/link)
+[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.3) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.3/link)
 [![Platform](https://img.shields.io/badge/platform-android-blue.svg)]()
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -456,41 +456,36 @@ adapter.finish();
 这个类是一个Path适配器,构造方法如下
 
 ```
-public TransitionAdapter(TransitionPathGenerator generator)
+public TransitionAdapter(PathGenerator generator)
 ```
 
-其中TransitionPathGenerator是用于转场动画的Path生成器接口,此接口继承于PathGenerator,定义如下
+适配器需要获得一个Path内所能容下的最大矩形区域来确定一个最小的放大Scale,以获得最好的视觉效果,
+当前采用了一种二分查找的方式去获得这个矩形区域,不过这种方式有个弊端,对于中心有镂空的Path,
+这种方式是不可行的,所以针对这种情况,添加了一个TransitionPathGenerator的接口,定义如下
 
 ```
 public interface TransitionPathGenerator extends PathGenerator {
 
-    /*
-     * 返回path在viewRange中包含的最大的和viewRange相似的的矩形区域,
-     * 返回的矩形区域中心需要和参数矩形区域中心一致,
+    /**
+     * @param similar 相似矩形参考
+     * @param boundWidth Path的范围区域宽
+     * @param boundHeight Path的范围区域高
+     * @return 返回最大的和@param similar相似的的矩形区域,
+     * 返回的矩形区域中心必须是Path的中心,即(boundWidth/2,boundHeight/2),
      * 为了尽量减少内存抖动,建议使用参数传入的矩形修改数值后返回
      */
-    Rect maxContainSimilarRange(Rect viewRange);
+    Rect maxContainSimilarRange(Rect similar, int boundWidth, int boundHeight);
 
 }
-
 ```
-由于当前没有很好的办法来判断Path内所能放下的最大矩形区域,所以这里目前需要生成器自己提供一个区域.
 
-为了避免频繁垃圾回收,实现TransitionPathGenerator时,尽量直接用传进来的viewRange返回.
-
-当前内置了四种转场动画的Path生成器
-- CircleTransitionPathGenerator(圆形)
-- OvalTransitionPathGenerator(椭圆)
-- RhombusTransitionPathGenerator(菱形)
-- RandomTransitionPathGenerator(随机)
-
-默认使用圆形.
+如果有比较特殊的Path(比如有镂空)需要自定义包含的矩形区域范围,可以实现这个接口,然后作为TransitionAdapter的构造参数传入.
 
 回到TransitionAdapter上
 
 以上两种转场动画容器都有setAdapter方法,可以替换掉默认的TransitionAdapter.
 
-从TransitionFrameLayout.switchView中获得Adapter后,还可以通过setPathCenter来控制Path的扩张和收缩中心,默认是PathCenter是View中心.
+从TransitionFrameLayout.switchView中获得Adapter后,还可以通过setPathCenter来控制Path的扩张和收缩中心,默认PathCenter是View中心.
 
 ## 原理解析
 

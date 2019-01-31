@@ -1,7 +1,6 @@
 package com.yxf.clippathlayout.transition;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -11,7 +10,7 @@ import android.view.View;
 import com.yxf.clippathlayout.PathInfo;
 import com.yxf.clippathlayout.Utils;
 import com.yxf.clippathlayout.impl.ClipPathFrameLayout;
-import com.yxf.clippathlayout.transition.generator.CircleTransitionPathGenerator;
+import com.yxf.clippathlayout.pathgenerator.CirclePathGenerator;
 
 import java.lang.ref.WeakReference;
 
@@ -36,7 +35,7 @@ public class TransitionFrameLayout extends ClipPathFrameLayout implements Transi
 
     public TransitionFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setAdapterInternal(new TransitionAdapter(new CircleTransitionPathGenerator()));
+        setAdapterInternal(new TransitionAdapter(new CirclePathGenerator()));
     }
 
     @Override

@@ -7,13 +7,13 @@ import android.graphics.PointF;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class ClipPathLayoutDelegate implements ClipPathLayout {
 
@@ -32,7 +32,18 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
 
     private ViewGetKey mTempViewGetKey;
 
-    private boolean hasLayoutRequest = false;
+    private boolean mHasLayoutRequest = false;
+
+    private boolean mInBeforeDrawChild = false;
+
+    private Queue<Runnable> mPendingTaskQueue = new LinkedList<Runnable>();
+
+    private Runnable mBeforeDrawTask = new Runnable() {
+        @Override
+        public void run() {
+            executePendingTask();
+        }
+    };
 
     public ClipPathLayoutDelegate(ViewGroup parent) {
         if (parent == null) {
@@ -97,7 +108,7 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
 
     @Override
     public void applyPathInfo(final PathInfo info) {
-        Utils.runOnUiThreadAfterViewCanUse(mParent, new Runnable() {
+        runBeforeDrawChild(new Runnable() {
             @Override
             public void run() {
                 removeDeletedViewPathInfo();
@@ -121,7 +132,7 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
             Log.e(TAG, "cancelPathInfo: child is null");
             return;
         }
-        Utils.runOnUiThreadAfterViewCanUse(mParent, new Runnable() {
+        runBeforeDrawChild(new Runnable() {
             @Override
             public void run() {
                 ViewGetKey key = getTempViewGetKey(child.hashCode(), child);
@@ -133,10 +144,16 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
 
     @Override
     public void beforeDrawChild(Canvas canvas, View child, long drawingTime) {
+        if (mInBeforeDrawChild) {
+            Log.e(TAG, "beforeDrawChild: can not recursive call this method");
+            return;
+        }
+        mInBeforeDrawChild = true;
+        executePendingTask();
         canvas.save();
         canvas.translate(child.getLeft(), child.getTop());
-        if (hasLayoutRequest) {
-            hasLayoutRequest = false;
+        if (mHasLayoutRequest) {
+            mHasLayoutRequest = false;
             notifyAllPathChangedInternal(false);
         }
         ViewGetKey key = getTempViewGetKey(child.hashCode(), child);
@@ -153,6 +170,7 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
         }
         resetTempViewGetKey();
         canvas.translate(-child.getLeft(), -child.getTop());
+        mInBeforeDrawChild = false;
     }
 
     @Override
@@ -171,7 +189,7 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
     }
 
     private void notifyAllPathChangedInternal(final boolean reDraw) {
-        Utils.runOnUiThreadAfterViewCanUse(mParent, new Runnable() {
+        runBeforeDrawChild(new Runnable() {
             @Override
             public void run() {
                 Iterator<Map.Entry<ViewKey, PathInfo>> iterator = mPathInfoMap.entrySet().iterator();
@@ -198,11 +216,11 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
 
     @Override
     public void requestLayout() {
-        hasLayoutRequest = true;
+        mHasLayoutRequest = true;
     }
 
     private void notifyPathChangedInternal(final View child) {
-        Utils.runOnUiThreadAfterViewCanUse(mParent, new Runnable() {
+        runBeforeDrawChild(new Runnable() {
             @Override
             public void run() {
                 ViewGetKey key = getTempViewGetKey(child.hashCode(), child);
@@ -282,6 +300,22 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
             if (info.getView() == null) {
                 iterator.remove();
             }
+        }
+    }
+
+    private void runBeforeDrawChild(Runnable runnable) {
+        if (mInBeforeDrawChild) {
+            runnable.run();
+        } else {
+            mPendingTaskQueue.add(runnable);
+            mParent.removeCallbacks(mBeforeDrawTask);
+            Utils.runOnUiThreadAfterViewCanUse(mParent, mBeforeDrawTask);
+        }
+    }
+
+    private void executePendingTask() {
+        while (mPendingTaskQueue.size() > 0) {
+            mPendingTaskQueue.poll().run();
         }
     }
 
