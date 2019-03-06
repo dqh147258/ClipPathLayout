@@ -46,8 +46,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
-
-group = "com.yxf"
 // 根节点添加
 install {
     repositories.mavenInstaller {
