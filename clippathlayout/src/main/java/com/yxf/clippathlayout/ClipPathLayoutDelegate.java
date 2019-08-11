@@ -1,9 +1,17 @@
 package com.yxf.clippathlayout;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DrawFilter;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +39,19 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
     private Matrix mTempMatrix;
 
     private ViewGetKey mTempViewGetKey;
+
+    private Paint mPathPaint;
+    private Paint mBitmapPaint;
+
+    private PorterDuffXfermode mDstInMode;
+    private PorterDuffXfermode mDstOutMode;
+
+    private DrawFilter mOriginalDrawFilter;
+    private Integer mOriginalLayerType;
+
+    private int mCanvasSavedCount;
+
+    private DrawFilter mAntiAliasDrawFilter;
 
     private boolean mHasLayoutRequest = false;
 
@@ -150,32 +171,92 @@ public class ClipPathLayoutDelegate implements ClipPathLayout {
         }
         mInBeforeDrawChild = true;
         executePendingTask();
-        canvas.save();
-        canvas.translate(child.getLeft(), child.getTop());
         if (mHasLayoutRequest) {
             mHasLayoutRequest = false;
             notifyAllPathChangedInternal(false);
         }
+
         ViewGetKey key = getTempViewGetKey(child.hashCode(), child);
         PathInfo info = mPathInfoMap.get(key);
+        if (info != null && info.isAntiAlias()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mCanvasSavedCount = canvas.saveLayer(child.getLeft(), child.getTop(), child.getRight(), child.getBottom(), null);
+            } else {
+                mCanvasSavedCount = canvas.saveLayer(child.getLeft(), child.getTop(), child.getRight(), child.getBottom(), null, Canvas.ALL_SAVE_FLAG);
+            }
+        } else {
+            mCanvasSavedCount = canvas.save();
+        }
         if (info != null) {
-            if ((info.getApplyFlag() & PathInfo.APPLY_FLAG_DRAW_ONLY) != 0) {
-                Path path = info.getPath();
-                if (path != null) {
-                    Utils.clipPath(canvas, path, info.getClipType());
-                } else {
-                    Log.d(TAG, "beforeDrawChild: path is null , hash code : " + info.hashCode());
+            if (!info.isAntiAlias()) {
+                if ((info.getApplyFlag() & PathInfo.APPLY_FLAG_DRAW_ONLY) != 0) {
+                    Path path = info.getPath();
+                    if (path != null) {
+                        canvas.translate(child.getLeft(), child.getTop());
+                        Utils.clipPath(canvas, path, info.getClipType());
+                        canvas.translate(-child.getLeft(), -child.getTop());
+                    } else {
+                        Log.d(TAG, "beforeDrawChild: path is null , hash code : " + info.hashCode());
+                    }
                 }
+            } else {
+                mOriginalDrawFilter = canvas.getDrawFilter();
+                mOriginalLayerType = mParent.getLayerType();
+                mParent.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                if (mAntiAliasDrawFilter == null) {
+                    mAntiAliasDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+                }
+                canvas.setDrawFilter(mAntiAliasDrawFilter);
             }
         }
         resetTempViewGetKey();
-        canvas.translate(-child.getLeft(), -child.getTop());
         mInBeforeDrawChild = false;
     }
 
     @Override
     public void afterDrawChild(Canvas canvas, View child, long drawingTime) {
-        canvas.restore();
+        ViewGetKey key = getTempViewGetKey(child.hashCode(), child);
+        PathInfo info = mPathInfoMap.get(key);
+        if (info != null && info.isAntiAlias()) {
+            if ((info.getApplyFlag() & PathInfo.APPLY_FLAG_DRAW_ONLY) != 0) {
+                Path path = info.getPath();
+                if (path != null) {
+                    Bitmap bitmap = Bitmap.createBitmap(child.getWidth(), child.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas c = new Canvas(bitmap);
+                    if (mPathPaint == null) {
+                        mPathPaint = new Paint();
+                        mPathPaint.setAntiAlias(true);
+                    }
+                    if (mBitmapPaint == null) {
+                        mBitmapPaint = new Paint();
+                        mPathPaint.setAntiAlias(true);
+                    }
+                    c.drawPath(path, mPathPaint);
+                    if (info.getClipType() == PathInfo.CLIP_TYPE_IN) {
+                        if (mDstInMode == null) {
+                            mDstInMode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
+                        }
+                        mBitmapPaint.setXfermode(mDstInMode);
+                    } else {
+                        if (mDstOutMode == null) {
+                            mDstOutMode = new PorterDuffXfermode(PorterDuff.Mode.DST_OUT);
+                        }
+                        mBitmapPaint.setXfermode(mDstOutMode);
+                    }
+                    canvas.drawBitmap(bitmap, child.getLeft(), child.getTop(), mBitmapPaint);
+                    //if use drawPath may cause some strange problems
+                    /*canvas.translate(child.getLeft(), child.getTop());
+                    canvas.drawPath(path, mBitmapPaint);
+                    canvas.translate(-child.getLeft(),-child.getTop());*/
+                } else {
+                    Log.d(TAG, "beforeDrawChild: path is null , hash code : " + info.hashCode());
+                }
+            }
+            mParent.setLayerType(mOriginalLayerType, null);
+            canvas.setDrawFilter(mOriginalDrawFilter);
+        }
+        resetTempViewGetKey();
+        canvas.restoreToCount(mCanvasSavedCount);
     }
 
     @Override

@@ -1,5 +1,5 @@
 # ClipPathLayout
-[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.3) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.3/link)
+[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.4) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.4/link)
 [![Platform](https://img.shields.io/badge/platform-android-blue.svg)]()
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -130,6 +130,7 @@ mImageView = mLayout.findViewById(R.id.image);
 new PathInfo.Builder(new CirclePathGenerator(), mImageView)
     .setApplyFlag(mApplyFlag)
     .setClipType(mClipType)
+    .setAntiAlias(false)
     .create()
     .apply();
 ```
@@ -214,6 +215,11 @@ Path的裁剪模式,有如下两种
 
 ![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/select_clip_mode.gif)
 
+#### AntiAlias
+
+抗锯齿,true表示开启,false关闭,默认关闭.
+
+请慎用此功能,此功能会关闭硬件加速并且会新建图层,在View绘制期间还有一个图片生成过程,所以此功能开启会严重降低绘制性能,并且如果频繁刷新界面会导致内存抖动.所以这个功能只建议在静态而且不常刷新的情况下使用.
 
 ### 自定义ClipPathLayout
 

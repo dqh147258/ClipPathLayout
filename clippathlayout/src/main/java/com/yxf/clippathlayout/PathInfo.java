@@ -32,6 +32,8 @@ public class PathInfo {
     private Path mPath;
     private PathRegion mPathRegion;
 
+    private boolean mAntiAlias;
+
     private PathInfo(PathGenerator generator, View view) {
         mPathGenerator = generator;
         mViewReference = new WeakReference<View>(view);
@@ -130,15 +132,20 @@ public class PathInfo {
         mPathRegion = pathRegion;
     }
 
+    public boolean isAntiAlias() {
+        return mAntiAlias;
+    }
+
     public static class Builder {
         private PathGenerator mPathGenerator;
         private View mView;
         private int mApplyFlag = APPLY_FLAG_DRAW_AND_TOUCH;
         private int mClipType = CLIP_TYPE_IN;
+        private boolean mAntiAlias = false;
 
         /**
          * @param generator Path生成器
-         * @param view 实现了ClipPathLayout接口的ViewGroup的子View
+         * @param view      实现了ClipPathLayout接口的ViewGroup的子View
          */
         public Builder(PathGenerator generator, View view) {
             if (generator == null) {
@@ -161,10 +168,16 @@ public class PathInfo {
             return this;
         }
 
+        public Builder setAntiAlias(boolean antiAlias) {
+            mAntiAlias = antiAlias;
+            return this;
+        }
+
         public PathInfo create() {
             PathInfo info = new PathInfo(mPathGenerator, mView);
             info.mApplyFlag = mApplyFlag;
             info.mClipType = mClipType;
+            info.mAntiAlias = mAntiAlias;
             return info;
         }
     }

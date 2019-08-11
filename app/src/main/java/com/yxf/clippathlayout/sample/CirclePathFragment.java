@@ -84,6 +84,7 @@ public class CirclePathFragment extends Fragment {
         new PathInfo.Builder(new OvalPathGenerator(), mClipTypeSwitchView)
                 .setApplyFlag(PathInfo.APPLY_FLAG_DRAW_AND_TOUCH)
                 .setClipType(PathInfo.CLIP_TYPE_IN)
+                .setAntiAlias(true)
                 .create()
                 .apply(mLayout);
 

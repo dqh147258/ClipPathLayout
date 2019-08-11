@@ -39,6 +39,7 @@ public class YinYangFishFragment extends Fragment {
         });
 
         new PathInfo.Builder(new YinYangFishPathGenerator(270), mYinFishView)
+                .setAntiAlias(true)
                 .create()
                 .apply();
 
