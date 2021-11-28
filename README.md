@@ -1,5 +1,5 @@
 # ClipPathLayout
-[ ![Download](https://api.bintray.com/packages/dqh147258/ClipPathLayout/ClipPathLayout/images/download.svg?version=1.0.4) ](https://bintray.com/dqh147258/ClipPathLayout/ClipPathLayout/1.0.4/link)
+[![](https://www.jitpack.io/v/dqh147258/ClipPathLayout.svg)](https://www.jitpack.io/#dqh147258/ClipPathLayout)
 [![Platform](https://img.shields.io/badge/platform-android-blue.svg)]()
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -54,33 +54,23 @@ Android中实现不规则图形的布局
 
 ### 添加依赖
 
-库已经上传jcenter,Android Studio自带jcenter依赖,
-如果没有添加,请在项目根build.gradle中添加jcenter Maven
-
 ```
-buildscript {
-
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://www.jitpack.io' }
+		}
+	}
 ```
 
 在app module中的build.gradle中添加依赖
+```
+	dependencies {
+	        implementation 'com.github.dqh147258:ClipPathLayout:1.1.0'
+	}
+```
+
+如果依然使用Jcenter版本则是
 ```
 implementation 'com.yxf:clippathlayout:1.0.+'
 ```
