@@ -14,23 +14,23 @@ Android中实现不规则图形的布局
 
 将方形图片裁剪成圆形并且让圆形View的4角不接收触摸事件
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/circle.gif)
+![](image/circle.gif)
 
 很多游戏都会有方向键,曾经我也做过一个小游戏,但是在做方向键的时候遇到一个问题,4个方向按钮的位置会有重叠,导致局部地方会发生误触.
 当时没有特别好的解决办法,只能做自定义View,而自定义View特别麻烦,需要重写onTouchEvent和onDraw计算落点属于哪个方向,并增加点击效果.
 简单的自定义View会丧失很多Android自带的一些特性,要支持这些特性又繁琐而复杂.
 下面借助于ClipPathLayout用4个菱形按钮实现的方向控制键很好的解决了这个问题
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/control_button.gif)
+![](image/control_button.gif)
 
 对于遥控器的按键的模拟同样有上述问题,一般只能采用自定义View实现,较为繁琐.
 以下是借助于ClipPathLayout实现的遥控器按钮,由于没有美工切图,比较丑,将就下吧
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/remote_controller.gif)
+![](image/remote_controller.gif)
 
 甚至我们可以将不连续的图形变成一个View,比如做一个阴阳鱼的按钮
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/yin_yang_fish.gif)
+![](image/yin_yang_fish.gif)
 
 
 ### 转场动画
@@ -40,15 +40,15 @@ Android中实现不规则图形的布局
 沪江开心词场里使用的就是这种动画,这种动画很棒,但是也有一个小缺点,就是在切换的过程中,切换用的View和即将要切换的View没有什么关系.
 借助于ClipPathLayout扩展的TransitionFrameLayout也可以实现较为和谐的切换效果,由于是示例,不写太复杂的场景,以下仅用两个TextView作为展示
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/view_transition.gif)
+![](image/view_transition.gif)
 
 在浏览QQ空间和使用QQ浏览器的过程看到腾讯的广告切换效果也是很不错的,这里借助于TransitionFrameLayout也可以实现这种效果
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/scroll_transition_2.gif)
+![](image/scroll_transition_2.gif)
 
 其实大部分的场景切换应该是用在Fragment中,这里也用TransitionFragmentContainer实现了Fragment的场景切换效果
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/fragment_transition_2.gif)
+![](image/fragment_transition_2.gif)
 
 ## 使用
 
@@ -127,7 +127,7 @@ new PathInfo.Builder(new CirclePathGenerator(), mImageView)
 
 搞定!运行就可以看到一个圆形的View.
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/circle.gif)
+![](image/circle.gif)
 
 和效果展示上的这个图差不多,不过这张图多了几个按钮,然后那个圆形View有个绿色背景,那个是用来做对比的,在那个View之下添加了一个绿色的View,不要在意这些细节......
 
@@ -190,7 +190,7 @@ Path的应用标志,有如下几种
 
 切换效果如下
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/select_apply_flag.gif)
+![](image/select_apply_flag.gif)
 
 #### ClipType
 
@@ -203,7 +203,7 @@ Path的裁剪模式,有如下两种
 
 切换效果如下
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/select_clip_mode.gif)
+![](image/select_clip_mode.gif)
 
 #### AntiAlias
 
@@ -435,7 +435,7 @@ adapter.finish();
 
 直接使用adapter.animate()的效果如下
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/view_transition.gif)
+![](image/view_transition.gif)
 
 #### TransitionFragmentContainer
 
@@ -445,7 +445,7 @@ adapter.finish();
 
 效果如下
 
-![](https://github.com/dqh147258/ClipPathLayout/blob/master/image/fragment_transition_2.gif)
+![](image/fragment_transition_2.gif)
 
 #### TransitionAdapter
 
