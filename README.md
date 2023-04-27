@@ -1,4 +1,4 @@
-# ClipPathLayout
+# ClipPathLayout    [English Doc](https://github.com/dqh147258/ClipPathLayout/blob/master/README-EN.md)
 [![](https://www.jitpack.io/v/dqh147258/ClipPathLayout.svg)](https://www.jitpack.io/#dqh147258/ClipPathLayout)
 [![Platform](https://img.shields.io/badge/platform-android-blue.svg)]()
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
