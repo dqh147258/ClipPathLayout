@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
 
 android {
@@ -36,4 +37,21 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.7.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+}
+
+group = 'com.github.yourusername'
+version = rootProject.ext.CLIP_PATH_LAYOUT_VERSION
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.github.dqh147258'
+            artifactId = 'clippathlayout'
+            version = rootProject.ext.CLIP_PATH_LAYOUT_VERSION
+            
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
 }

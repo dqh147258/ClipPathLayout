@@ -27,7 +27,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    CLIP_PATH_LAYOUT_VERSION = '2.0.0'
+    CLIP_PATH_LAYOUT_VERSION = '2.0.2'
     compileSdkVersion = 34
     minSdkVersion = 21
     targetSdkVersion = 34
