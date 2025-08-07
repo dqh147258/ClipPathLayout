@@ -28,6 +28,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -39,18 +45,17 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 }
 
-group = 'com.github.yourusername'
+group = 'com.github.dqh147258'
 version = rootProject.ext.CLIP_PATH_LAYOUT_VERSION
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.github.dqh147258'
-            artifactId = 'clippathlayout'
-            version = rootProject.ext.CLIP_PATH_LAYOUT_VERSION
-            
-            afterEvaluate {
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
                 from components.release
+                groupId = 'com.github.dqh147258'
+                artifactId = 'clippathlayout'
+                version = rootProject.ext.CLIP_PATH_LAYOUT_VERSION
             }
         }
     }
