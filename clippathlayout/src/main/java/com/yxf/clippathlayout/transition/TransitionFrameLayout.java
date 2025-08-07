@@ -11,6 +11,7 @@ import com.yxf.clippathlayout.PathInfo;
 import com.yxf.clippathlayout.Utils;
 import com.yxf.clippathlayout.impl.ClipPathFrameLayout;
 import com.yxf.clippathlayout.pathgenerator.CirclePathGenerator;
+import com.yxf.clippathlayout.pathgenerator.RhombusPathGenerator;
 
 import java.lang.ref.WeakReference;
 
@@ -151,7 +152,7 @@ public class TransitionFrameLayout extends ClipPathFrameLayout implements Transi
         mTransitionAdapter.setReverse(reverse);
         mTransitionAdapter.updateAnimator();
         if (mPreviousViewReference != null && mPreviousViewReference.get() != null) {
-            mPreviousInfo = new PathInfo.Builder(mTransitionAdapter, mPreviousViewReference.get())
+            mPreviousInfo = new PathInfo.Builder(new RhombusPathGenerator(), mPreviousViewReference.get())
                     .setClipType(reverse ? PathInfo.CLIP_TYPE_IN : PathInfo.CLIP_TYPE_OUT)
                     .setApplyFlag(mApplyFlag)
                     .create()

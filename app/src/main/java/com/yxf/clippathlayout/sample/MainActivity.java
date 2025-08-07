@@ -10,6 +10,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,6 +27,7 @@ import java.lang.ref.WeakReference;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "MainActivity";
 
     private TransitionFragmentContainer mContainer;
 
@@ -106,14 +109,14 @@ public class MainActivity extends AppCompatActivity
 
     private void switchFragment(Fragment fragment, boolean addToBackStack) {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        Fragment f;
+        Fragment f = null;
         if (mLastFragmentReference != null && (f = mLastFragmentReference.get()) != null) {
             transaction.hide(f);
         }
         if (addToBackStack) {
             transaction.addToBackStack(null);
         }
-        transaction.add(R.id.fragment_container, fragment).commit();
+        transaction.replace(R.id.fragment_container, fragment).commit();
         mLastFragmentReference = new WeakReference<Fragment>(fragment);
     }
 

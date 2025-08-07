@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -33,10 +34,10 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
 
     private int mPathCenterX = PATH_CENTER_VIEW_CENTER, mPathCenterY = PATH_CENTER_VIEW_CENTER;
 
-    public static final float FAILED_PERCENT = 0f;
-    public static final float SUCCESSFAULLY_PERCENT = 1f;
 
-    private float mPercent = 0f;
+    // Percentage配置为0将会导致mMatrix.postScale异常, 所以这里用一个非常小的值代替
+    public static final float RESET_PERCENTAGE = 0.0001f;
+    private float mPercent = RESET_PERCENTAGE;
 
     private float mScale = INVALID_SCALE;
 
@@ -77,7 +78,7 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
     }
 
     void reset() {
-        mPercent = 0f;
+        mPercent = RESET_PERCENTAGE;
         mScale = INVALID_SCALE;
         mInvalidateOriginPath = true;
         mReverse = false;
@@ -164,8 +165,8 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
 
     @Override
     public void setProgress(float percent) {
-        if (percent < 0f) {
-            percent = 0f;
+        if (percent < RESET_PERCENTAGE) {
+            percent = RESET_PERCENTAGE;
         }
         if (Float.compare(mPercent, percent) == 0) {
             //percent not change ,return
@@ -220,8 +221,8 @@ public class TransitionAdapter implements PathGenerator, ProgressController {
     }
 
     void updateAnimator() {
-        float start = mReverse ? 1f : 0f;
-        float end = mReverse ? 0f : 1f;
+        float start = mReverse ? 1f : RESET_PERCENTAGE;
+        float end = mReverse ? RESET_PERCENTAGE : 1f;
         mValueAnimator = ValueAnimator.ofFloat(start, end);
         mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
